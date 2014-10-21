@@ -17,6 +17,7 @@ namespace MVC.Demo
                 name: "Products",
                 url: "Product/{productId}",
                 defaults: new { controller = "Product", action = "Details" }
+                //,constraints: new { productId = @"\d+" }
             );
 
             routes.MapRoute(
