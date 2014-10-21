@@ -7,6 +7,7 @@ using MVC.Demo.Models;
 
 namespace MVC.Demo.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         public ActionResult Index()
