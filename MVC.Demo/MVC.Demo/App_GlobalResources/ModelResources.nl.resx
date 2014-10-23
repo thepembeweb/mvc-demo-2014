@@ -120,6 +120,9 @@
   <data name="Age" xml:space="preserve">
     <value>Leeftijd</value>
   </data>
+  <data name="ApplicationTitle" xml:space="preserve">
+    <value>De Nederlandse Titel</value>
+  </data>
   <data name="FirstName" xml:space="preserve">
     <value>Voornaam</value>
   </data>

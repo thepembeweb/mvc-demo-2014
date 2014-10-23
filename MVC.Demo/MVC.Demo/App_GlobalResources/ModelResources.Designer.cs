@@ -70,6 +70,15 @@ namespace MVC.Demo.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The English Title.
+        /// </summary>
+        public static string ApplicationTitle {
+            get {
+                return ResourceManager.GetString("ApplicationTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to First name.
         /// </summary>
         public static string FirstName {
