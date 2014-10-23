@@ -1,36 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using MVC.Demo.Models;
+using MVC.Demo.Repositories;
 
 namespace MVC.Demo.Controllers
 {
     [AllowAnonymous]
     public class CustomersController : Controller
     {
-        private PoiDbContext db = new PoiDbContext();
+        private readonly ICustomerRepository _repository;
+
+        public CustomersController(ICustomerRepository repository)
+        {
+            _repository = repository;
+        }
 
         // GET: Customers
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-            return View(await db.Customers.ToListAsync());
+            return View(_repository.GetCustomers().ToList());
         }
 
         // GET: Customers/Details/5
-        public async Task<ActionResult> Details(int? id)
+        public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = await db.Customers.FindAsync(id);
+            Customer customer = _repository.GetCustomerById(id.GetValueOrDefault(0));
             if (customer == null)
             {
                 return HttpNotFound();
@@ -54,12 +54,11 @@ namespace MVC.Demo.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "CustomerId,FirstName,LastName,Email,Age,RequiredIntField")] Customer customer)
+        public ActionResult Create([Bind(Include = "CustomerId,FirstName,LastName,Email,Age,RequiredIntField")] Customer customer)
         {
             if (ModelState.IsValid)
             {
-                db.Customers.Add(customer);
-                await db.SaveChangesAsync();
+                _repository.Create(customer);
                 return RedirectToAction("Index");
             }
 
@@ -72,13 +71,13 @@ namespace MVC.Demo.Controllers
         }
 
         // GET: Customers/Edit/5
-        public async Task<ActionResult> Edit(int? id)
+        public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = await db.Customers.FindAsync(id);
+            Customer customer = _repository.GetCustomerById(id.GetValueOrDefault(0));
             if (customer == null)
             {
                 return HttpNotFound();
@@ -91,25 +90,24 @@ namespace MVC.Demo.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "CustomerId,FirstName,LastName,Email,Age,RequiredIntField")] Customer customer)
+        public ActionResult Edit([Bind(Include = "CustomerId,FirstName,LastName,Email,Age,RequiredIntField")] Customer customer)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(customer).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                _repository.Update(customer);
                 return RedirectToAction("Index");
             }
             return View(customer);
         }
 
         // GET: Customers/Delete/5
-        public async Task<ActionResult> Delete(int? id)
+        public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = await db.Customers.FindAsync(id);
+            Customer customer = _repository.GetCustomerById(id.GetValueOrDefault(0));
             if (customer == null)
             {
                 return HttpNotFound();
@@ -120,21 +118,12 @@ namespace MVC.Demo.Controllers
         // POST: Customers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int id)
         {
-            Customer customer = await db.Customers.FindAsync(id);
-            db.Customers.Remove(customer);
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
+            Customer customer = _repository.GetCustomerById(id);
+            _repository.Delete(customer);
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
+            return RedirectToAction("Index");
         }
     }
 }
