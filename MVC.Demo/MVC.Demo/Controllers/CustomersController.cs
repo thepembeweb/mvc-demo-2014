@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
 using System.Web;
@@ -40,6 +41,11 @@ namespace MVC.Demo.Controllers
         // GET: Customers/Create
         public ActionResult Create()
         {
+            if (Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName == "nl")
+            {
+                return View(@"~\Views\nl\Customers\Create.cshtml");
+            }
+
             return View();
         }
 
@@ -55,6 +61,11 @@ namespace MVC.Demo.Controllers
                 db.Customers.Add(customer);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
+            }
+
+            if (Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName == "nl")
+            {
+                return View(@"~\Views\nl\Customers\Create.cshtml", customer);
             }
 
             return View(customer);
