@@ -10,5 +10,6 @@ namespace MVC.Demo.Models
         }
 
         public DbSet<PointOfInterest> PoiSet { get; set; }
+        public DbSet<Customer> Customers { get; set; }
     }
 }
